@@ -2,7 +2,7 @@ import { point, buffer, randomPosition, bbox, distance } from '@turf/turf';
 
 export type Position = { lat: number; lng: number };
 
-export function generateRandom(center: Position, radius: number): Position {
+export function generateRandomGoal(center: Position, radius: number): Position {
   const ball = point([center.lat, center.lng]);
   const dist = buffer(ball, radius);
   const randomPos = randomPosition(bbox(dist));
@@ -12,8 +12,8 @@ export function generateRandom(center: Position, radius: number): Position {
 
 export function checkGoal(
   ball: Position,
-  goalDistance: number,
-  goal: Position
+  goal: Position,
+  goalDistance: number
 ) {
   const ballPosition = point([ball.lat, ball.lng]);
   const goalPosition = point([goal.lat, goal.lng]);
