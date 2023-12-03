@@ -2,6 +2,11 @@ import { point, buffer, randomPosition, bbox, distance } from '@turf/turf';
 
 export type Position = { lat: number; lng: number };
 
+export function isFloat(value: string | number): boolean {
+  const n = parseFloat(value.toString());
+  return !isNaN(n) || n === 0;
+}
+
 export function generateRandomGoal(center: Position, radius: number): Position {
   const ball = point([center.lat, center.lng]);
   const dist = buffer(ball, radius);

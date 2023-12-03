@@ -1,23 +1,27 @@
 import express, { Express } from 'express';
 import cors from 'cors';
 import { generateRandomGoal, checkGoal, Position } from './utils';
+import { isFloat } from './utils';
 
 const app: Express = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.get('/generateGoal', (req, res) => {
-  const { latitude, longitude, radius } = req.body;
-  if (
-    !isNaN(parseFloat(latitude)) ||
-    !isNaN(parseFloat(longitude)) ||
-    !isNaN(parseFloat(radius))
-  ) {
+app.get('/generateRandomCoordinates', (req, res) => {
+  console.log(req.query);
+  const { latitude, longitude, radius } = req.query as {
+    [key: string]: string;
+  };
+  if (isFloat(latitude) && isFloat(longitude) && isFloat(radius)) {
     throw new Error('Invalid input');
   }
-  const position: Position = { lat: latitude, lng: longitude };
-  const pos = generateRandomGoal(position, radius);
+
+  const position: Position = {
+    lat: parseFloat(latitude),
+    lng: parseFloat(longitude),
+  };
+  const pos = generateRandomGoal(position, parseFloat(radius));
 
   res.status(200).json({ pos });
 });
@@ -29,24 +33,30 @@ app.get('/doesGoalOccurs', (req, res) => {
     goalLatitude,
     goalLongitude,
     goalDistance,
-  } = req.body;
+  } = req.query as { [key: string]: string };
   if (
-    !isNaN(parseFloat(ballLatitude)) ||
-    !isNaN(parseFloat(ballLongitude)) ||
-    !isNaN(parseFloat(goalLatitude)) ||
-    !isNaN(parseFloat(goalLongitude)) ||
-    !isNaN(parseFloat(goalDistance))
+    isFloat(ballLatitude) &&
+    isFloat(ballLongitude) &&
+    isFloat(goalLatitude) &&
+    isFloat(goalLongitude) &&
+    isFloat(goalDistance)
   ) {
     throw new Error('Invalid input');
   }
-  const ballPos: Position = { lat: ballLatitude, lng: ballLongitude };
-  const goallPos: Position = { lat: goalLatitude, lng: goalLongitude };
-  const result = checkGoal(ballPos, goallPos, goalDistance);
+  const ballPos: Position = {
+    lat: parseFloat(ballLatitude),
+    lng: parseFloat(ballLongitude),
+  };
+  const goallPos: Position = {
+    lat: parseFloat(goalLatitude),
+    lng: parseFloat(goalLongitude),
+  };
+  const result = checkGoal(ballPos, goallPos, parseFloat(goalDistance));
 
   res.status(200).json({ result });
 });
 const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Example app listening on port ${port}`);
 });

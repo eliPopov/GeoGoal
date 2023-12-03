@@ -1,24 +1,38 @@
 import axios from 'axios';
-const REST_API_SERVER = "http://localhost:3000";
+const REST_API_SERVER = 'http://localhost:8000';
+type Position = { lat: number; lng: number };
 
 export const createApiClient = () => {
   return {
-    generateRandomCoordinates: async (position:any, radius:number, unit:string) => {
-      const params = new URLSearchParams()
-      params.set('latitude', position.latitude)
-      params.set('longitude', position.longitude)
-      params.set('radius', radius.toString())
-      params.set('unit', unit);
-
-      return axios.get(`${REST_API_SERVER}/generateRandomCoordinates`, { params });
+    generateRandomCoordinates: async (
+      position: Position,
+      radius: number,
+      unit: string
+    ) => {
+      return axios.get(`${REST_API_SERVER}/generateRandomCoordinates`, {
+        params: {
+          latitude: position.lat,
+          longitude: position.lng,
+          radius: radius,
+          unit: unit,
+        },
+      });
     },
-    doesGoalOccurs: async (position:any, goalDistance:number, unit:string) => {
-      const params = new URLSearchParams()
-      params.set('latitude', position.latitude)
-      params.set('longitude', position.longitude)
-      params.set('goalDistance', goalDistance.toString())
-      params.set('unit', unit);
-
-      return axios.get(`${REST_API_SERVER}/doesGoalOccurs`, { params });
-    }
-  }}
+    doesGoalOccurs: async (
+      ballPosition: Position,
+      goalPosition: Position,
+      goalDistance: number,
+      unit: string
+    ) => {
+      return axios.get(`${REST_API_SERVER}/doesGoalOccurs`, {
+        params: {
+          ballLatitude: ballPosition.lat,
+          ballLongitude: ballPosition.lng,
+          goalLatitude: goalPosition.lat,
+          goalLongitude: goalPosition.lng,
+          goalDistance,
+        },
+      });
+    },
+  };
+};
