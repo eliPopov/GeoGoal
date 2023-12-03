@@ -1,18 +1,21 @@
 import express, { Express } from 'express';
-import cors from 'cors';
 import { generateRandomGoal, checkGoal, Position } from './utils';
 import { isFloat } from './utils';
+import * as turf from '@turf/turf';
 
 const app: Express = express();
 
 app.use(express.json());
-app.use(cors());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 app.get('/generateRandomCoordinates', (req, res) => {
-  console.log(req.query);
-  const { latitude, longitude, radius } = req.query as {
+  const { latitude, longitude, radius, unit } = req.query as {
     [key: string]: string;
   };
+
   if (isFloat(latitude) && isFloat(longitude) && isFloat(radius)) {
     throw new Error('Invalid input');
   }
@@ -21,8 +24,12 @@ app.get('/generateRandomCoordinates', (req, res) => {
     lat: parseFloat(latitude),
     lng: parseFloat(longitude),
   };
-  const pos = generateRandomGoal(position, parseFloat(radius));
-
+  const pos = generateRandomGoal(
+    position,
+    parseFloat(radius),
+    unit as turf.Units
+  );
+  console.log(pos);
   res.status(200).json({ pos });
 });
 

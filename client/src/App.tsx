@@ -12,7 +12,7 @@ function App() {
     lat: number;
     lng: number;
   }>({ lat: 0, lng: 0 });
-  const raduis = 1;
+  const radius = 1;
   const raduisUnit = 'kilometers';
   const goalDistance = 10;
   const goalDistanceUnit = 'meters';
@@ -65,18 +65,15 @@ function App() {
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     });
-
     randomCoordinateRequest();
   };
 
-  const randomCoordinateRequest = async () => {
-    const response = await api.generateRandomCoordinates(
-      ballPosition,
-      raduis,
-      raduisUnit
-    );
-
-    setGoalPosition(response.data.pos);
+  const randomCoordinateRequest = () => {
+    api
+      .generateRandomCoordinates(ballPosition, radius, raduisUnit)
+      .then((response) => {
+        setGoalPosition(response.data.pos);
+      });
   };
 
   const updatePosition = async (position: any) => {
@@ -84,7 +81,6 @@ function App() {
       lat: position.coords.latitude,
       lng: position.coords.longitude,
     });
-    console.log('BALL pos: ', ballPosition);
 
     const response = await api.doesGoalOccurs(
       ballPosition,

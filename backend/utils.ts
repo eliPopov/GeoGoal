@@ -1,15 +1,26 @@
-import { point, buffer, randomPosition, bbox, distance } from '@turf/turf';
+import {
+  point,
+  buffer,
+  randomPosition,
+  bbox,
+  distance,
+  Units,
+} from '@turf/turf';
 
 export type Position = { lat: number; lng: number };
 
 export function isFloat(value: string | number): boolean {
-  const n = parseFloat(value.toString());
-  return !isNaN(n) || n === 0;
+  const n = Number(value.toString());
+  return isNaN(n) || n === 0;
 }
 
-export function generateRandomGoal(center: Position, radius: number): Position {
+export function generateRandomGoal(
+  center: Position,
+  radius: number,
+  unit: Units
+): Position {
   const ball = point([center.lat, center.lng]);
-  const dist = buffer(ball, radius);
+  const dist = buffer(ball, radius, { units: unit });
   const randomPos = randomPosition(bbox(dist));
   const goal: Position = { lat: randomPos[0], lng: randomPos[1] };
   return goal;
